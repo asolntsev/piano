@@ -3,50 +3,78 @@
 	import welcome from '$lib/images/svelte-welcome.webp';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 
-	let context;
-	const playing = {}
+	const LA = 440
+	const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+	class Note {
+		constructor(id, name, octave, frequency) {
+			this.id = id;
+			this.name = name;
+			this.octave = octave;
+			this.frequency = frequency;
+		}
+
+		get sharp() {
+			return this.name.indexOf('#') > -1;
+		}
+	}
+
+	let context
+	$: playing = {}
 
 	function startPlay(note) {
 		context = context || new AudioContext();
 
 		const o = context.createOscillator();
 		o.type = 'sine'
-		o.frequency.value = notes[note];
+		o.frequency.value = note.frequency;
 		// const g = context.createGain()
 		// o.connect(g)
 		o.connect(context.destination)
 		o.start(0)
-		const high = notes[note]
-		playing[note] = o
+		playing[note.id] = o
 	}
 	
 	function stopPlay(note) {
-		const o = playing[note]
+		const o = playing[note.id]
 		setTimeout(() => {o?.stop(0)})
-		delete playing[note]
+		delete playing[note.id]
 	}
 	
-	/*
-	https://ru.wikipedia.org/wiki/%D0%A0%D0%B0%D0%B2%D0%BD%D0%BE%D0%BC%D0%B5%D1%80%D0%BD%D0%BE_%D1%82%D0%B5%D0%BC%D0%BF%D0%B5%D1%80%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D1%8B%D0%B9_%D1%81%D1%82%D1%80%D0%BE%D0%B9
-	 */
-	const notes = {
-		'C4': 261.63,
-		'D4': 293.67,
-		'E4': 329.63,
-		'F4': 349.23,
-		'G4': 392.00,
-		'A4': 440.00,
-		'B4': 493.88,
-		'C5': 523.25,
-		'D5': 587.33,
-		'E5': 659.26,
-		'F5': 698.46,
-		'G5': 783.99,
-		'A5': 880.00,
-		'B5': 987.77,
+	$: isPlaying = (note) => {
+		//console.log('isPlaying', note.id, note.name, !!playing[note.id])
+		return !!playing[note.id]
 	}
 	
-	function high() {
+	const notes = calculateNotesEqualTemperament()
+	const notes2 = calculateNotesNaturalTemperament()
+	
+	function calculateNotesEqualTemperament() {
+		let result = [];
+		for (let i = -33; i < 28; i++) {
+			result.push(new Note(i, name(i), octave(i), high(i)));
+		}
+		return result
+	}
+
+	function calculateNotesNaturalTemperament() {
+		let result = [];
+		// TODO
+		for (let i = -33; i < 28; i++) {
+			result.push(new Note(i, name(i), octave(i), high(i)));
+		}
+		return result
+	}
+
+	function name(i) {
+		return noteNames[(i - 3 + 12000) % 12]
+	}
+
+	function octave(i) {
+		return parseInt((i + 33) / 12)
+	}
+
+	function high(i) {
 		// Можно математически вычислить частоты для всего звукоряда, пользуясь формулой:
 		// f(i) = f0 * 2^(i/12)
 		// где f0 — частота камертона (например Ля 440 Hz), 
@@ -57,8 +85,33 @@
 		что 
 		, и перебором можно проверить, что при n = 12 (с k = 7 — это ближайшее целое к ln(3/2)/ln(2)n) достигается лучшее приближение, нежели при меньших или несколько бóльших n (точнее было бы при n = 41 или n = 53, но слишком большие n неудобны с практической точки зрения)
 		 */
+		//return LA * parseFloat(Math.pow(2, i/12).toFixed(3))
+		return LA * Math.pow(2, i/12)
+	}
+
+	const computerKeyboard = [49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 8] // 1 2 3 4 5 6 7 8 9 0 - = Backspace
+
+	function onKeyDown(e) {
+		// console.log('key', e.keyCode, e)
+		const noteIndex = computerKeyboard.indexOf(e.keyCode);
+		if (noteIndex > -1) {
+			const note = notes[noteIndex + 12];
+			if (!isPlaying(note)) {
+				startPlay(note)
+			}
+		}
+	}
+
+	function onKeyUp(e) {
+		const noteIndex = computerKeyboard.indexOf(e.keyCode);
+		if (noteIndex > -1) {
+			const note = notes[noteIndex + 12];
+			stopPlay(note)
+		}
 	}
 </script>
+
+<svelte:window on:keydown={onKeyDown} on:keyup={onKeyUp}/>
 
 <svelte:head>
 	<title>Home</title>
@@ -83,9 +136,19 @@
 
 	<Counter />
 
-	{#each Object.entries(notes) as [note, high]}
-		<div on:mousedown={() => startPlay(note)} on:mouseup={() => stopPlay(note)}>{note}</div>
-	{/each}
+	<h1>Equal temperament:</h1>
+	<div class="keyboard">
+		{#each Object.entries(notes.filter(note => note.id > -10 && note.id < 16)) as [i, note]}
+			<span on:mousedown={() => startPlay(note)} on:mouseup={() => stopPlay(note)}
+						class="key"
+						class:sharp="{note.sharp}"
+						class:playing="{isPlaying(note)}"
+						style="left: {1000/2 + note.id * 20}px"
+			>
+				{note.name} {isPlaying(note)}
+			</span>
+		{/each}
+	</div>
 
 </section>
 
@@ -116,5 +179,34 @@
 		height: 100%;
 		top: 0;
 		display: block;
+	}
+	
+	.keyboard {
+		width: 1000px;
+		height: 100px;
+		border: 1px solid green;
+		position: relative;
+	}
+	
+	.keyboard .key {
+		border: 1px solid lightgray;
+		margin: 0 2px;
+		padding: 1px;
+		text-align: center;
+		width: 30px;
+		height: 50px;
+		position: absolute;
+		top: 30px;
+		background-color: white;
+	}
+
+	.keyboard .key.sharp {
+		top: 5px;
+		background-color: black;
+		z-index: -1;
+	}
+	
+	.keyboard .key.playing {
+		border: 1px solid red;
 	}
 </style>
