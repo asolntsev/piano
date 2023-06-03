@@ -2,41 +2,37 @@
 	import Note from '$lib/Note.ts';
 	import Keyboard from "./Keyboard.svelte";
 
-	const LA = 440
+	const BASE = 260 // actually, 261.63
 	const notesEqual = [
-		new Note('A', LA),
-		new Note('A#', LA * Math.pow(2, 1/12)),
-		new Note('B', LA * Math.pow(2, 2/12)),
-		new Note('C', LA * Math.pow(2, 3/12)),
-		new Note('C#', LA * Math.pow(2, 4/12)),
-		new Note('D', LA * Math.pow(2, 5/12)),
-		new Note('D#', LA * Math.pow(2, 6/12)),
-		new Note('E', LA * Math.pow(2, 7/12)),
-		new Note('F', LA * Math.pow(2, 8/12)),
-		new Note('F#', LA * Math.pow(2, 9/12)),
-		new Note('G', LA * Math.pow(2, 10/12)),
-		new Note('G#', LA * Math.pow(2, 11/12)),
-		new Note('A2', LA * 2),
-		// new Note('A2#', LA * 2 * Math.pow(2, 1/12)),
-		// new Note('B2', LA * 2 * Math.pow(2, 2/12)),
-		// new Note('B2#', LA * 2 * Math.pow(2, 3/12)),
-		// new Note('C2', LA * 2 * Math.pow(2, 4/12)),
+		new Note('C', BASE),
+		new Note('C#', BASE * Math.pow(2, 1/12)),
+		new Note('D', BASE * Math.pow(2, 2/12)),
+		new Note('D#', BASE * Math.pow(2, 3/12)),
+		new Note('E', BASE * Math.pow(2, 4/12)),
+		new Note('F', BASE * Math.pow(2, 5/12)),
+		new Note('F#', BASE * Math.pow(2, 6/12)),
+		new Note('G', BASE * Math.pow(2, 7/12)),
+		new Note('G#', BASE * Math.pow(2, 8/12)),
+		new Note('A', BASE * Math.pow(2, 9/12)),
+		new Note('A#', BASE * Math.pow(2, 10/12)),
+		new Note('B', BASE * Math.pow(2, 11/12)),
+		new Note('C2', BASE * 2)
 	]
 
 	const notesNatural = [
-		new Note('A', LA),
-		new Note('A#', LA * 16/15),
-		new Note('B', LA * 9/8),
-		new Note('C', LA * 6/5),
-		new Note('C#', LA * 5/4),
-		new Note('D', LA * 4/3),
-		new Note('D#', LA * 45/32),
-		new Note('E', LA * 3/2),
-		new Note('F', LA * 8/5),
-		new Note('F#', LA * 5/3),
-		new Note('G', LA * 16/9),
-		new Note('G#', LA * 15/8),
-		new Note('A2', LA * 2),
+		new Note('C', BASE),
+		new Note('C#', BASE * 16/15),
+		new Note('D', BASE * 9/8),
+		new Note('D#', BASE * 6/5),
+		new Note('E', BASE * 5/4),
+		new Note('F', BASE * 4/3),
+		new Note('F#', BASE * 45/32),
+		new Note('G', BASE * 3/2),
+		new Note('G#', BASE * 8/5),
+		new Note('A', BASE * 5/3),
+		new Note('A#', BASE * 16/9),
+		new Note('B', BASE * 15/8),
+		new Note('C2', BASE * 2),
 	]
 	
 	$: temperament = 'equal'
