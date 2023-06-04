@@ -1,8 +1,7 @@
 <script>
+    export let name = "";
     export let notes = [];
-    export let listen = false
-    // const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-    const computerKeyboard = [49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 8] // 1 2 3 4 5 6 7 8 9 0 - = Backspace
+    export let keyCodes = []
 
     let context
     $: playing = {}
@@ -31,10 +30,10 @@
     }
     
     function showRatio() {
+        clearTimeout(hideRatioTimer)
         const playingNotes = Object.keys(playing).filter(note => !!playing[note]);
         if (playingNotes.length === 2) {
             ratio = calculateRatio(playing[playingNotes[0]].frequency.value, playing[playingNotes[1]].frequency.value)
-            clearTimeout(hideRatioTimer)
         }
         else {
             hideRatio()
@@ -46,7 +45,26 @@
     }
 
     function hideRatio() {
-        hideRatioTimer = setTimeout(() => ratio = null, 500)
+        hideRatioTimer = setTimeout(() => ratio = null, 200)
+    }
+    
+    function ratioClass(ratio) {
+        const error = Math.min(err(ratio, 0.5), err(ratio, 1), err(ratio, 1.5), err(ratio, 2), err(ratio, 2.5))
+        console.log(error)
+        if (error < 0.0001) {
+            return ''
+        }
+        if (error < 0.01) {
+            return 'small-error'
+        }
+        if (error >= 0.01) {
+            return 'big-error'
+        }
+        return ''
+    }
+    
+    function err(a, b) {
+        return Math.abs(a - b)
     }
 
     $: isPlaying = (note) => {
@@ -54,8 +72,7 @@
     }
 
     function onKeyDown(e) {
-        if (!listen) return
-        const noteIndex = computerKeyboard.indexOf(e.keyCode);
+        const noteIndex = keyCodes.indexOf(e.keyCode);
         if (noteIndex > -1) {
             const note = notes[noteIndex];
             if (!isPlaying(note)) {
@@ -65,9 +82,7 @@
     }
 
     function onKeyUp(e) {
-        if (!listen) return
-
-        const noteIndex = computerKeyboard.indexOf(e.keyCode);
+        const noteIndex = keyCodes.indexOf(e.keyCode);
         if (noteIndex > -1) {
             const note = notes[noteIndex];
             stopPlay(note)
@@ -84,7 +99,9 @@
 
 <svelte:window on:keydown={onKeyDown} on:keyup={onKeyUp}/>
 
-<h3>&nbsp; {#if ratio}Ratio: {ratio.toFixed(3)}{/if} </h3>
+<h1>{name}</h1>
+
+<h3>&nbsp; {#if ratio}Ratio: <span class={ratioClass(ratio)}>{ratio.toFixed(3)}</span>{/if} </h3>
 
 <div class="keyboard">
     {#each Object.entries(notes) as [i, note]}
@@ -131,5 +148,12 @@
     .keyboard .key.playing {
         border: 4px solid red;
         background-color: cyan;
+    }
+    
+    .small-error {
+        color: blue;
+    }
+    .big-error {
+        color: red;
     }
 </style>

@@ -35,7 +35,8 @@
 		new Note('C2', BASE * 2),
 	]
 	
-	$: temperament = 'equal'
+	const upperKeyCodes = [49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 8] // 1 2 3 4 5 6 7 8 9 0 - = Backspace
+	const downKeyCodes = [81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 219, 221, 13] // q w e r t y u i o p [ ] Enter
 </script>
 
 <svelte:head>
@@ -50,16 +51,12 @@
 		</span>
 	</h1>
 
-	<h1>Natural temperament:</h1>
 	<div class="row">
-		<input type="radio" name="temperament" bind:group={temperament} value="natural"/>
-		<Keyboard notes={notesNatural} listen={temperament === 'natural'}/>
+		<Keyboard name="Natural temperament" notes={notesNatural} keyCodes={upperKeyCodes}/>
 	</div>
 
-	<h1>Equal temperament:</h1>
 	<div class="row">
-		<input type="radio" name="temperament" bind:group={temperament} value="equal"/>
-		<Keyboard notes={notesEqual} listen={temperament === 'equal'}/>
+		<Keyboard name="Equal temperament" notes={notesEqual} keyCodes={downKeyCodes}/>
 	</div>
 </section>
 
@@ -74,6 +71,13 @@
 
 	h1 {
 		width: 100%;
+	}
+	
+	.row {
+		display: flex;
+		flex-direction: column;
+		margin: 10px;
+		padding: 10px;
 	}
 
 </style>
