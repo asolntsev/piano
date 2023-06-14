@@ -73,7 +73,7 @@
 		<Keyboard name="Equal temperament" notes={notesEqual} keyCodes={downKeyCodes}/>
 	</div>
 
-	{#each [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 51, 53] as size}
+	{#each [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 41, 51, 53] as size}
 		<div class="row">
 			<Keyboard name={`Equal temperament with ${size} notes  =>  diff with G: ${diffWithG(notesN(size)).toFixed(3)}`} notes={notesN(size)}/>
 		</div>
