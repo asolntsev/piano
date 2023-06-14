@@ -1,6 +1,6 @@
 <script>
-	import Note from '$lib/Note.ts';
-	import Keyboard from "./Keyboard.svelte";
+  import Note from '$lib/Note.ts';
+  import Keyboard from "./Keyboard.svelte";
 
 	const BASE = 260 // actually, 261.63
 	const notesEqual = [
@@ -66,7 +66,7 @@
 	</h1>
 
 	<div class="row">
-		<Keyboard name="Natural temperament" notes={notesNatural} keyCodes={upperKeyCodes}/>
+		<Keyboard name="Pure intonation" notes={notesNatural} keyCodes={upperKeyCodes}/>
 	</div>
 
 	<div class="row">
