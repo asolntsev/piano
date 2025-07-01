@@ -35,14 +35,14 @@
 		new Note('B', BASE * 15/8),
 		new Note('C2', BASE * 2),
 	]
-	
+
 	const upperKeyCodes = [49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 8] // 1 2 3 4 5 6 7 8 9 0 - = Backspace
 	const downKeyCodes = [81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 219, 221, 13] // q w e r t y u i o p [ ] Enter
 
 	$: notesN = (size) => {
 		return [ ...Array(size + 1).keys() ].map(i => new Note(`2^${i}/${size}`, BASE * Math.pow(2, i/size)))
 	}
-	
+
 	function diffWithG(notes) {
 		let minimalError = 2
 		for (let i = 1; i < notes.length; i++) {
@@ -74,9 +74,15 @@
 		<Keyboard name="Equal temperament" notes={notesEqual} keyCodes={downKeyCodes}/>
 	</div>
 
+
+	<div style="margin-top: 250px;">
+		<h1>Why 12 notes?</h1>
+		<h2>Error between G/C and 1.5:</h2>
+	</div>
+
 	{#each [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 41, 51, 53] as size}
 		<div class="row">
-			<Keyboard name={`Equal temperament with ${size} notes  =>  diff with G: ${diffWithG(notesN(size)).toFixed(3)}`} notes={notesN(size)}/>
+			<Keyboard name={`${size} notes  =>  error: ${diffWithG(notesN(size)).toFixed(3)}`} notes={notesN(size)}/>
 		</div>
 	{/each}
 </section>
@@ -93,7 +99,7 @@
 	h1 {
 		width: 100%;
 	}
-	
+
 	.row {
 		display: flex;
 		flex-direction: column;
