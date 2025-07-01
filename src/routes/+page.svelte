@@ -2,7 +2,8 @@
   import Note from '$lib/Note.ts';
   import Keyboard from "./Keyboard.svelte";
 
-	const BASE = 260 // actually, 261.63
+	const BASE = 261.63
+
 	const notesEqual = [
 		new Note('C', BASE),
 		new Note('C#', BASE * Math.pow(2, 1/12)),
