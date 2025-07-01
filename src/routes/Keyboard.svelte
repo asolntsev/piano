@@ -27,7 +27,7 @@
         setTimeout(() => {o?.stop(0)})
         playing[note.id] = null
     }
-    
+
     function showRatio() {
         clearTimeout(hideRatioTimer)
         const playingNotes = Object.keys(playing).filter(note => !!playing[note]);
@@ -38,7 +38,7 @@
             hideRatio()
         }
     }
-    
+
     function calculateRatio(note1, note2) {
         return (note1 > note2) ? (note1 / note2) : (note2 / note1);
     }
@@ -46,7 +46,7 @@
     function hideRatio() {
         hideRatioTimer = setTimeout(() => ratio = null, 200)
     }
-    
+
     function ratioClass(ratio) {
         const error = Math.min(err(ratio, 0.5), err(ratio, 1), err(ratio, 1.5), err(ratio, 2), err(ratio, 2.5))
         console.log(error)
@@ -61,7 +61,7 @@
         }
         return ''
     }
-    
+
     function err(a, b) {
         return Math.abs(a - b)
     }
@@ -87,7 +87,7 @@
             stopPlay(note)
         }
     }
-    
+
     function mouseDown(note) {
         startPlay(note)
     }
@@ -107,13 +107,16 @@
 			<span on:mousedown={(e) => mouseDown(note, e)} on:mouseup={(e) => mouseUp(note)}
                   class="key"
                   class:sharp="{note.sharp}"
+                  class:disabled="{note.disabled}"
                   class:playing="{isPlaying(note)}"
             >
-				{note.name}
-                {note.frequency.toFixed(2)}
-                <br/>
-                <br/>
-                <strong>{1 + parseInt(i)}</strong>
+        {#if !note.disabled}
+				  {note.name}
+          {note.frequency.toFixed(2)}
+          <br/>
+          <br/>
+          <strong>{1 + parseInt(i)}</strong>
+        {/if}
 			</span>
     {/each}
 </div>
@@ -143,12 +146,16 @@
         background-color: black;
         color: white;
     }
+    .keyboard .key.disabled {
+        background-color: #eee;
+        color: #eee;
+    }
 
     .keyboard .key.playing {
         border: 4px solid red;
         background-color: cyan;
     }
-    
+
     .small-error {
         color: blue;
     }
