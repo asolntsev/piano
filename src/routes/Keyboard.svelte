@@ -26,7 +26,6 @@
         const o = playing[note.id]
         setTimeout(() => {o?.stop(0)})
         playing[note.id] = null
-        hideRatio()
     }
     
     function showRatio() {
